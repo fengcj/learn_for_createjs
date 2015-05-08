@@ -10,7 +10,7 @@ stage.x = 150;*/
 var container = new createjs.Container();
 stage.addChild(container);
 
-var background, title, statement, price,increaseButon,decreaseButton;
+var background, title, statement, price, increaseButon, decreaseButton;
 
 
 /*var backgroundImage = new Image();
@@ -45,7 +45,7 @@ function addBackground() {
 
 
 function addTitle() {
-	title = new createjs.Bitmap("./assets/images/title.png");
+	title = new createjs.Bitmap("./assets/images/title.PNG");
 
 	console.log(stage.canvas.width);
 	console.log(title.image.width);
@@ -67,70 +67,103 @@ function addPrice() {
 	price = new createjs.Text("2 $", "40px Arial", "#ff0000");
 	price.x = (stage.canvas.width - price.getBounds().width) / 2;
 	console.log("in addPrice " + title.getBounds());
-	price.y = title.getBounds().height;	
+	price.y = title.getBounds().height;
 	container.addChild(price);
 }
 
-function addIncreaseButtonAndDecreaseButton(){
+function addIncreaseButtonAndDecreaseButton() {
 
-	var listener = function(event){
-	//	console.log(event.target);
-		var priceNum = Number(price.text.substr(0,price.text.length-1));
-	//	console.log(typeof priceNum);
+	var listener = function(event) {
+		//	console.log(event.target);
+		var priceNum = Number(price.text.substr(0, price.text.length - 1));
+		//	console.log(typeof priceNum);
 
-	//// TODO less hard core and priceNum may be some certain Number ,like 2 5 8 10
-		if(event.target.text === "+"){
+		//// TODO less hard core and priceNum may be some certain Number ,like 2 5 8 10
+		if (event.target.text === "+") {
 			price.text = priceNum + 1 + " $";
-		}else{
-			if(priceNum == 0){
-				price.text = 0 + " $"; 
-			}else{
-				price.text = priceNum - 1 + " $"; 
+		} else {
+			if (priceNum == 0) {
+				price.text = 0 + " $";
+			} else {
+				price.text = priceNum - 1 + " $";
 			}
-			
+
 		}
 	}
 
-	increaseButon = new createjs.Text("+","40px Arial","#00ff00");
+	increaseButon = new createjs.Text("+", "40px Arial", "#00ff00");
 	increaseButon.x = title.x;
 	increaseButon.y = title.getBounds().height;
 
 
-	decreaseButton = new createjs.Text("-","40px Arial","#0000ff");
+	decreaseButton = new createjs.Text("-", "40px Arial", "#0000ff");
 	decreaseButton.x = title.x + title.getBounds().width - decreaseButton.getBounds().width;
 	decreaseButton.y = title.getBounds().height;
 
-	increaseButon.addEventListener("click",listener);
-	decreaseButton.addEventListener("click",listener);
+	increaseButon.addEventListener("click", listener);
+	decreaseButton.addEventListener("click", listener);
 
 	container.addChild(increaseButon);
 	container.addChild(decreaseButton);
 }
 
-function onPreLoadComplete(){
+
+function addSprites() {
+	var spritesheet = new createjs.SpriteSheet({
+		images: ["./assets/images/sprites.PNG"],
+		frames: {
+			width: 32,
+			height: 32,
+			regX: 0,
+			regY: 0,
+			spacing: 1,
+			margin: 1
+		}
+	});
+
+	var clickHandler = function(event){
+		console.log(event.target);
+		console.log(123);
+	}
+
+	for (var i = 0; i < 10; i++) {
+		for (var j = 0; j < 10; j++) {
+			var sprite = new createjs.Sprite(spritesheet);
+			sprite.gotoAndStop(Math.floor(Math.random() * 48));
+			sprite.x = i * 32 + stage.canvas.width / 3
+			sprite.y = j * 32 + title.getBounds().height + price.getBounds().height + 10;
+
+			sprite.addEventListener("click",clickHandler);
+
+			container.addChild(sprite);
+		}
+	}
+}
+
+function onPreLoadComplete() {
 	addBackground();
 	addTitle();
 	addStatement();
 	addPrice();
 	addIncreaseButtonAndDecreaseButton();
+	addSprites();
 }
 
-var preLoadManifest = [
-	{
-		id: "background",
-		src: "./assets/images/background.PNG"
-	},{
-		id: "title",
-		src: "./assets/images/title.png"		
-	}
-];
+var preLoadManifest = [{
+	id: "background",
+	src: "./assets/images/background.PNG"
+}, {
+	id: "title",
+	src: "./assets/images/title.PNG"
+}, {
+	id: "sprites",
+	src: "./assets/images/sprites.PNG"
+}];
 
 
-var preLoader = new createjs.LoadQueue(false);  // must set to be false when just run the index.html
-preLoader.on("complete",onPreLoadComplete);
+var preLoader = new createjs.LoadQueue(false); // must set to be false when just run the index.html
+preLoader.on("complete", onPreLoadComplete);
 preLoader.loadManifest(preLoadManifest);
-
-
 
 
 
